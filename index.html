@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp BetaApk  Nicolas Garcia</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #111; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .phone { width: 360px; height: 720px; background: #fff; border: 3px solid #333; border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; }
+    .screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; }
+    .screen.active { display: flex; }
+ 
+   
+    #s1 { background: #075E54; }
+    .circuit { width: 100px; height: 100px; border: 4px solid #fff; border-radius: 20px; position: relative; margin-bottom: 16px; }
+    .circuit::before { content: ''; width: 60px; height: 60px; border: 3px solid #fff; border-radius: 10px; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    .dot { position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%; }
+    .dot:nth-child(1){top:-4px;left:20px} .dot:nth-child(2){bottom:-4px;right:20px}
+    .dot:nth-child(3){left:-4px;top:40px} .dot:nth-child(4){right:-4px;bottom:30px}
+    #s1 h1 { color:#fff; font-size:28px; margin-bottom:8px; }
+    #s1 p { color:#ccc; font-size:13px; margin-top:60px; }
+ 
+   
+    #s2 { padding: 40px 24px; justify-content: space-between; }
+    .logo2 { width:80px; height:80px; border:3px solid #075E54; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; margin-bottom:20px; }
+    #s2 h2 { font-size:22px; text-align:center; }
+    .subtitle { color:#666; font-size:13px; text-align:center; margin-top:10px; line-height:1.5; }
+    .terms { font-size:12px; color:#888; text-align:center; margin-top:10px; }
+    .terms span { color:#075E54; }
+    .btn { background:#075E54; color:#fff; border:none; padding:14px; border-radius:30px; font-size:15px; cursor:pointer; width:100%; margin-top:10px; }
+ 
+    
+    #s3 { padding:40px 24px; justify-content:flex-start; gap:14px; }
+    #s3 h2 { font-size:20px; text-align:center; }
+    #s3 p { font-size:13px; color:#666; text-align:center; }
+    .flag-row { display:flex; align-items:center; gap:10px; border-bottom:1px solid #ccc; padding-bottom:10px; width:100%; }
+    .input-tel { width:100%; border:none; border-bottom:2px solid #075E54; padding:10px 0; font-size:20px; text-align:center; outline:none; letter-spacing:4px; }
+ 
+   
+    .topbar { width:100%; background:#075E54; color:#fff; padding:14px 16px; font-size:18px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+    .topbar-icons { display:flex; gap:16px; }
+ 
+    
+    .chat-list { flex:1; width:100%; overflow-y:auto; }
+    .chat-item { display:flex; align-items:center; padding:12px 16px; border-bottom:1px solid #eee; cursor:pointer; gap:12px; }
+    .chat-item:hover { background:#f5f5f5; }
+    .avatar { width:46px; height:46px; border-radius:50%; background:#ccc; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+    .chat-info { flex:1; overflow:hidden; }
+    .chat-name { font-weight:bold; font-size:15px; }
+    .chat-preview { font-size:13px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .chat-time { font-size:11px; color:#aaa; }
+ 
+    
+    .bottomnav { width:100%; background:#f0f0f0; display:flex; border-top:1px solid #ddd; flex-shrink:0; }
+    .nav-item { flex:1; display:flex; flex-direction:column; align-items:center; padding:6px 0; font-size:10px; color:#888; cursor:pointer; gap:2px; }
+    .nav-item.active { color:#075E54; font-weight:bold; }
+    .nav-item span { font-size:18px; }
+ 
+    
+    #s5 { background:#ECE5DD; justify-content:flex-start; }
+    .chat-topbar { width:100%; background:#075E54; color:#fff; padding:10px 12px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+    .back-btn { font-size:20px; cursor:pointer; }
+    .av2 { width:36px; height:36px; border-radius:50%; background:#aaa; display:flex; align-items:center; justify-content:center; font-size:16px; }
+    .cname { font-weight:bold; font-size:15px; }
+    .cstatus { font-size:11px; color:#cde; }
+    .messages { flex:1; width:100%; padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+    .msg { max-width:70%; padding:8px 12px; border-radius:10px; font-size:14px; }
+    .recv { background:#fff; align-self:flex-start; }
+    .sent { background:#DCF8C6; align-self:flex-end; }
+    .msg-time { font-size:10px; color:#aaa; text-align:right; margin-top:2px; }
+    .chat-input-row { width:100%; display:flex; align-items:center; padding:8px; background:#f0f0f0; gap:8px; flex-shrink:0; }
+    .chat-input { flex:1; border:none; border-radius:20px; padding:8px 14px; font-size:14px; outline:none; }
+    .send-btn { width:40px; height:40px; background:#075E54; border:none; border-radius:50%; color:#fff; font-size:18px; cursor:pointer; }
+ 
+    
+    .call-item { display:flex; align-items:center; padding:12px 16px; border-bottom:1px solid #eee; gap:12px; }
+    .call-name { font-weight:bold; font-size:15px; }
+    .call-detail { font-size:12px; color:#888; }
+ 
+    
+    .settings-profile { display:flex; align-items:center; padding:16px; border-bottom:1px solid #eee; gap:14px; width:100%; }
+    .av3 { width:56px; height:56px; border-radius:50%; background:#bbb; display:flex; align-items:center; justify-content:center; font-size:26px; }
+    .settings-item { display:flex; align-items:center; padding:14px 16px; border-bottom:1px solid #f0f0f0; gap:14px; width:100%; cursor:pointer; }
+    .settings-item:hover { background:#f9f9f9; }
+ 
+    
+    .status-my { display:flex; align-items:center; padding:12px 16px; border-bottom:2px solid #eee; gap:12px; cursor:pointer; width:100%; }
+    .status-add { width:46px; height:46px; border-radius:50%; background:#f0f0f0; border:2px dashed #ccc; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; position:relative; }
+    .status-add-dot { position:absolute; bottom:0; right:0; width:18px; height:18px; background:#075E54; border-radius:50%; border:2px solid #fff; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:bold; }
+    .status-section-label { width:100%; padding:8px 16px 4px; font-size:12px; color:#888; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px; background:#f9f9f9; }
+    .status-item { display:flex; align-items:center; padding:10px 16px; border-bottom:1px solid #f0f0f0; gap:12px; cursor:pointer; width:100%; }
+    .status-item:hover { background:#f5f5f5; }
+    .status-avatar-ring { width:50px; height:50px; border-radius:50%; padding:2px; flex-shrink:0; }
+    .status-avatar-ring.unread { background: conic-gradient(#075E54 0deg 360deg); }
+    .status-avatar-ring.read { background: conic-gradient(#ccc 0deg 360deg); }
+    .status-avatar-inner { width:100%; height:100%; border-radius:50%; background:#f0f0f0; border:2px solid #fff; display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .status-name { font-weight:bold; font-size:14px; }
+    .status-time { font-size:12px; color:#888; }
+    .status-fab { position:absolute; bottom:60px; right:12px; width:50px; height:50px; background:#25D366; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+<div class="phone">
+ 
+  
+  <div class="screen active" id="s1">
+    <div class="circuit">
+      <div class="dot"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div>
+    </div>
+    <h1>WhatsApp</h1>
+    <p>from Facebook</p>
+  </div>
+ 
+  
+  <div class="screen" id="s2">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;">
+      <div class="logo2">💬</div>
+      <h2>Bienvenido a WhatsApp</h2>
+      <p class="subtitle">Aceptas las politicas de privacidad "agregar y continuar " acepte los terminos y servicios.</p>
+      <p class="terms"> ...POLITICAS DE LA EMPRESA ETC... <span>FUNCIONES</span> Y <span>POLITICAS DE PRIVACIDAD ETC</span>.</p>
+    </div>
+    <div style="padding:0 24px 40px;width:100%;">
+      <button class="btn" onclick="go('s3')">Agregar y Continuar</button>
+    </div>
+  </div>
+ 
+  
+  <div class="screen" id="s3">
+    <h2>Ingrese Numero de Telefono</h2>
+    <p>WhatsApp enviara un codigo de verificacion a su SMS.</p>
+    <div class="flag-row"><span>🇨🇴</span><p>Colombia (+57)</p></div>
+    <input class="input-tel" type="tel" placeholder="300 000 0000" />
+    <button class="btn" onclick="go('s4')" style="margin-top:20px;">Siguiente →</button>
+  </div>
+ 
+  
+  <div class="screen" id="s4">
+    <div class="topbar"><span>WhatsApp</span><div class="topbar-icons"><span>🔍</span><span>⋮</span></div></div>
+    <div class="chat-list">
+      <div class="chat-item" onclick="go('s5')">
+        <div class="avatar">👤</div>
+        <div class="chat-info"><div class="chat-name">Juan Pérez</div><div class="chat-preview">¿Qué más brou?</div></div>
+        <div class="chat-time">10:32</div>
+      </div>
+      <div class="chat-item" onclick="go('s5')">
+        <div class="avatar">👩</div>
+        <div class="chat-info"><div class="chat-name">María López</div><div class="chat-preview">Ya voy para allá </div></div>
+        <div class="chat-time">9:15</div>
+      </div>
+      <div class="chat-item" onclick="go('s5')">
+        <div class="avatar">👦</div>
+        <div class="chat-info"><div class="chat-name">Pedro Gómez</div><div class="chat-preview">Ok listo, nos vemos bro </div></div>
+        <div class="chat-time">Ayer</div>
+      </div>
+    </div>
+    <div class="bottomnav">
+      <div class="nav-item active"><span>💬</span>Chats</div>
+      <div class="nav-item" onclick="go('s9')"><span>🔵</span>Estados</div>
+      <div class="nav-item" onclick="go('s6')"><span>📞</span>Llamadas</div>
+      <div class="nav-item" onclick="go('s7')"><span>👥</span>Grupos</div>
+      <div class="nav-item" onclick="go('s8')"><span>⚙️</span>Config.</div>
+    </div>
+  </div>
+ 
+  
+  <div class="screen" id="s5">
+    <div class="chat-topbar">
+      <span class="back-btn" onclick="go('s4')">◀️</span>
+      <div class="av2">👤</div>
+      <div style="flex:1"><div class="cname">Juan Pérez</div><div class="cstatus">en línea</div></div>
+      <span>📞</span>
+    </div>
+    <div class="messages">
+      <div class="msg recv">Hola! ¿Cómo estás?<div class="msg-time">10:20</div></div>
+      <div class="msg sent">Todo bien, ¿y tú?<div class="msg-time">10:21</div></div>
+      <div class="msg recv">¿Qué planes tienes?<div class="msg-time">10:25</div></div>
+      <div class="msg sent">Hoy estudiando muchooooo<div class="msg-time">10:26</div></div>
+      <div class="msg recv">¿Qué más brou?<div class="msg-time">10:32</div></div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" placeholder="Mensaje..." />
+      <button class="send-btn">➤</button>
+    </div>
+    <div class="bottomnav">
+      <div class="nav-item" onclick="go('s4')"><span>💬</span>Chats</div>
+      <div class="nav-item" onclick="go('s9')"><span>🔵</span>Estados</div>
+      <div class="nav-item" onclick="go('s6')"><span>📞</span>Llamadas</div>
+      <div class="nav-item" onclick="go('s7')"><span>👥</span>Grupos</div>
+      <div class="nav-item" onclick="go('s8')"><span>⚙️</span>Config.</div>
+    </div>
+  </div>
+ 
+  
+  <div class="screen" id="s6">
+    <div class="topbar"><span>Llamadas</span><div class="topbar-icons"><span>🔍</span></div></div>
+    <div class="chat-list">
+      <div class="call-item"><div class="avatar">👤</div><div style="flex:1"><div class="call-name">Juan Pérez</div><div class="call-detail">📲 Entrante · Hoy 10:15</div></div><span style="font-size:22px;color:#075E54;">📞</span></div>
+      <div class="call-item"><div class="avatar">👩</div><div style="flex:1"><div class="call-name">María López</div><div class="call-detail">📤 Saliente · Ayer 8:00</div></div><span style="font-size:22px;color:#075E54;">📞</span></div>
+      <div class="call-item"><div class="avatar">👦</div><div style="flex:1"><div class="call-name">Pedro Gómez</div><div class="call-detail">📵 Perdida · Lun 18:30</div></div><span style="font-size:22px;color:red;">📞</span></div>
+    </div>
+    <div class="bottomnav">
+      <div class="nav-item" onclick="go('s4')"><span>💬</span>Chats</div>
+      <div class="nav-item" onclick="go('s9')"><span>🔵</span>Estados</div>
+      <div class="nav-item active"><span>📞</span>Llamadas</div>
+      <div class="nav-item" onclick="go('s7')"><span>👥</span>Grupos</div>
+      <div class="nav-item" onclick="go('s8')"><span>⚙️</span>Config.</div>
+    </div>
+  </div>
+ 
+  
+  <div class="screen" id="s7">
+    <div class="topbar"><span>Grupos</span><div class="topbar-icons"><span>➕</span></div></div>
+    <div class="chat-list">
+      <div class="chat-item"><div class="avatar">👨‍👩‍👧</div><div class="chat-info"><div class="chat-name">Familia 🏠</div><div class="chat-preview">Mamá: ¿A qué hora llegan?</div></div><div class="chat-time">11:00</div></div>
+      <div class="chat-item"><div class="avatar">🎓</div><div class="chat-info"><div class="chat-name">Compañeros de clase</div><div class="chat-preview">Pedro: El trabajo es para hoy</div></div><div class="chat-time">10:45</div></div>
+      <div class="chat-item"><div class="avatar">⚽</div><div class="chat-info"><div class="chat-name">Amigos fútbol</div><div class="chat-preview">Juan: ¿Jugamos el sábado?</div></div><div class="chat-time">Ayer</div></div>
+    </div>
+    <div class="bottomnav">
+      <div class="nav-item" onclick="go('s4')"><span>💬</span>Chats</div>
+      <div class="nav-item" onclick="go('s9')"><span>🔵</span>Estados</div>
+      <div class="nav-item" onclick="go('s6')"><span>📞</span>Llamadas</div>
+      <div class="nav-item active"><span>👥</span>Grupos</div>
+      <div class="nav-item" onclick="go('s8')"><span>⚙️</span>Config.</div>
+    </div>
+  </div>
+ 
+  
+  <div class="screen" id="s8">
+    <div class="topbar"><span>Configuración</span></div>
+    <div class="settings-profile">
+      <div class="av3">🙂</div>
+      <div><div style="font-weight:bold;font-size:16px;">Tu nombre</div><div style="font-size:13px;color:#888;">¡Disponible!</div></div>
+    </div>
+    <div class="chat-list">
+      <div class="settings-item"><span style="font-size:22px;">🔑</span><span>Cuenta</span></div>
+      <div class="settings-item"><span style="font-size:22px;">🔒</span><span>Privacidad</span></div>
+      <div class="settings-item"><span style="font-size:22px;">💬</span><span>Chats</span></div>
+      <div class="settings-item"><span style="font-size:22px;">🔔</span><span>Notificaciones</span></div>
+      <div class="settings-item"><span style="font-size:22px;">💾</span><span>Almacenamiento</span></div>
+      <div class="settings-item"><span style="font-size:22px;">ℹ️</span><span>Ayuda</span></div>
+    </div>
+    <div class="bottomnav">
+      <div class="nav-item" onclick="go('s4')"><span>💬</span>Chats</div>
+      <div class="nav-item" onclick="go('s9')"><span>🔵</span>Estados</div>
+      <div class="nav-item" onclick="go('s6')"><span>📞</span>Llamadas</div>
+      <div class="nav-item" onclick="go('s7')"><span>👥</span>Grupos</div>
+      <div class="nav-item active"><span>⚙️</span>Config.</div>
+    </div>
+  </div>
+ 
+  
+  <div class="screen" id="s9" style="justify-content:flex-start; position:relative;">
+    <div class="topbar"><span>Estados</span><div class="topbar-icons"><span>🔍</span><span>⋮</span></div></div>
+    <div class="chat-list">
+ 
+      
+      <div class="status-my">
+        <div class="status-add">
+          🙂
+          <div class="status-add-dot">+</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:bold;font-size:15px;">Mi estado</div>
+          <div style="font-size:12px;color:#888;">Toca para añadir estado</div>
+        </div>
+        <span style="font-size:20px;color:#888;">📷</span>
+      </div>
+ 
+     
+      <div class="status-section-label">Recientes</div>
+ 
+      <div class="status-item">
+        <div class="status-avatar-ring unread">
+          <div class="status-avatar-inner">👩</div>
+        </div>
+        <div style="flex:1">
+          <div class="status-name">María López</div>
+          <div class="status-time">Hace 5 min</div>
+        </div>
+      </div>
+ 
+      <div class="status-item">
+        <div class="status-avatar-ring unread">
+          <div class="status-avatar-inner">👤</div>
+        </div>
+        <div style="flex:1">
+          <div class="status-name">Juan Pérez</div>
+          <div class="status-time">Hace 18 min</div>
+        </div>
+      </div>
+ 
+      <div class="status-item">
+        <div class="status-avatar-ring unread">
+          <div class="status-avatar-inner">🎓</div>
+        </div>
+        <div style="flex:1">
+          <div class="status-name">Compañeros de clase</div>
+          <div class="status-time">Hace 42 min</div>
+        </div>
+      </div>
+ 
+     
+      <div class="status-section-label">Vistos</div>
+ 
+      <div class="status-item">
+        <div class="status-avatar-ring read">
+          <div class="status-avatar-inner">👦</div>
+        </div>
+        <div style="flex:1">
+          <div class="status-name">Pedro Gómez</div>
+          <div class="status-time">Hace 9 h</div>
+        </div>
+      </div>
+ 
+      <div class="status-item">
+        <div class="status-avatar-ring read">
+          <div class="status-avatar-inner">👨‍👩‍👧</div>
+        </div>
+        <div style="flex:1">
+          <div class="status-name">Familia 🏠</div>
+          <div class="status-time">Hace 5 h</div>
+        </div>
+      </div>
+ 
+    </div>
+ 
+  
+    <div class="status-fab">✏️</div>
+ 
+    <div class="bottomnav">
+      <div class="nav-item" onclick="go('s4')"><span>💬</span>Chats</div>
+      <div class="nav-item active"><span>🔵</span>Estados</div>
+      <div class="nav-item" onclick="go('s6')"><span>📞</span>Llamadas</div>
+      <div class="nav-item" onclick="go('s7')"><span>👥</span>Grupos</div>
+      <div class="nav-item" onclick="go('s8')"><span>⚙️</span>Config.</div>
+    </div>
+  </div>
+ 
+</div>
+<script>
+  setTimeout(() => go('s2'), 2000);
+  function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+</script>
+</body>
+</html>
